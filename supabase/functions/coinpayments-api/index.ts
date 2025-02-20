@@ -14,8 +14,8 @@ serve(async (req) => {
 
   try {
     const { action, params } = await req.json()
-    const apiKey = Deno.env.get('COINPAYMENTS_API_KEY')
-    const apiSecret = Deno.env.get('COINPAYMENTS_API_SECRET')
+    const apiKey = Deno.env.get('7401a7645e1709dd23cd3824d5f3e9938eada4f7b5d23bba781d15c74ac98ce9')
+    const apiSecret = Deno.env.get('a5425F5d92cF3A9Be1F8dE21Db2c5304dd6e8A5616318BF9F9f8e7775291B657')
 
     if (!apiKey || !apiSecret) {
       throw new Error('Coinpayments API credentials not configured')
