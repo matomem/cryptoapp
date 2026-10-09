@@ -14,6 +14,7 @@ import Receive from "./pages/user/Receive";
 import History from "./pages/user/History";
 import Settings from "./pages/user/Settings";
 import NotFound from "./pages/NotFound";
+import Help from "./pages/Help";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
           <Route path="/user/receive" element={<Receive />} />
           <Route path="/user/history" element={<History />} />
           <Route path="/user/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
