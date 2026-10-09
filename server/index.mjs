@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { resolve, extname, sep } from "node:path";
-import { randomBytes, scrypt as scryptCallback, timingSafeEqual, createHash, createHmac } from "node:crypto";
+import { randomBytes, scrypt as scryptCallback, timingSafeEqual, createHmac } from "node:crypto";
 import { promisify } from "node:util";
 import { neon } from "@neondatabase/serverless";
 
@@ -11,7 +11,7 @@ const DIST = resolve(ROOT, "dist");
 const COOKIE = "mycrypto_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 7;
 const MAX_BODY_BYTES = 16 * 1024;
-const allowedAssets = new Set((process.env.LUNO_ALLOWED_ASSETS || "XBT").split(",").map((v) => v.trim().toUpperCase()).filter(Boolean));
+let allowedAssets = new Set(["XBT"]);
 
 function loadLocalEnv() {
   // Minimal .env loader for local clones. Existing process/platform values win.
@@ -58,6 +58,7 @@ function safeUser(user) { return { id: user.id, email: user.email, fullName: use
 
 async function main() {
   await loadLocalEnv();
+  allowedAssets = new Set((process.env.LUNO_ALLOWED_ASSETS || "XBT").split(",").map((v) => v.trim().toUpperCase()).filter(Boolean));
   if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required. Copy .env.example to .env and configure Neon.");
   if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) throw new Error("SESSION_SECRET must be set to a random value of at least 32 characters.");
   const sql = neon(process.env.DATABASE_URL);
