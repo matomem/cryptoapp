@@ -17,6 +17,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { apiRequest } from "@/lib/api";
 
 export function DashboardSidebar() {
   const navigate = useNavigate();
@@ -29,8 +30,12 @@ export function DashboardSidebar() {
     { title: "Help", icon: HelpCircle, url: "#" },
   ];
 
-  const handleLogout = () => {
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await apiRequest("/api/auth/logout", { method: "POST" });
+    } finally {
+      navigate("/login");
+    }
   };
 
   return (
