@@ -1,4 +1,3 @@
-
 import {
   Sidebar,
   SidebarContent,
@@ -23,7 +22,7 @@ export function DashboardSidebar() {
   const navigate = useNavigate();
 
   const menuItems = [
-    { title: "Wallet", icon: myWallet, url: "/user/welcome" },
+    { title: "Wallet", icon: Wallet, url: "/user/welcome" },
     { title: "Send/Receive", icon: ArrowLeftRight, url: "/user/send-receive" },
     { title: "History", icon: History, url: "/user/history" },
     { title: "Settings", icon: Settings, url: "/user/settings" },
