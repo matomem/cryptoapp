@@ -13,7 +13,7 @@ const Send = () => {
   const navigate = useNavigate();
   const [address, setAddress] = useState("");
   const [amount, setAmount] = useState("");
-  const [currency, setCurrency] = useState("BTC");
+  const [currency, setCurrency] = useState("XBT");
   const [submitting, setSubmitting] = useState(false);
 
   const handleSend = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -63,14 +63,13 @@ const Send = () => {
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">Send Funds</h2>
-                    <p className="text-sm text-gray-600">Submit a transfer through the configured wallet provider</p>
+                    <p className="text-sm text-gray-600">Submit a real crypto send request to Luno</p>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="currency" className="text-sm font-medium block">Asset</label>
                   <select id="currency" value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm">
-                    <option value="BTC">Bitcoin (BTC)</option>
-                    <option value="ZAR">South African Rand (ZAR)</option>
+                    <option value="XBT">Bitcoin (BTC)</option>
                   </select>
                 </div>
                 <div className="space-y-2">
