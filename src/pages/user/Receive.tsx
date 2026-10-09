@@ -1,4 +1,3 @@
-
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { DashboardSidebar } from "@/components/DashboardSidebar";
 import { Card } from "@/components/ui/card";
@@ -10,14 +9,33 @@ import { useToast } from "@/components/ui/use-toast";
 const Receive = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  // A real address must be supplied by a connected wallet/backend.
+  // Do not display or copy an empty or invented address.
   const walletAddress = "";
-  
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(walletAddress);
-    toast({
-      title: "Address Copied",
-      description: "Wallet address has been copied to clipboard",
-    });
+
+  const copyToClipboard = async () => {
+    if (!walletAddress) {
+      toast({
+        title: "Wallet not connected",
+        description: "A receiving address is not configured yet.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(walletAddress);
+      toast({
+        title: "Address copied",
+        description: "Your wallet address has been copied to the clipboard.",
+      });
+    } catch {
+      toast({
+        title: "Unable to copy address",
+        description: "Your browser did not allow clipboard access.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -30,7 +48,7 @@ const Receive = () => {
               <h1 className="text-3xl font-bold">Receive Crypto</h1>
               <SidebarTrigger />
             </div>
-            
+
             <Card className="max-w-md mx-auto">
               <div className="p-6 space-y-6">
                 <div className="flex items-center gap-4 mb-6">
@@ -45,21 +63,28 @@ const Receive = () => {
 
                 <div className="space-y-4">
                   <div className="p-4 bg-gray-50 rounded-lg break-all relative">
-                    <p className="text-sm font-mono">{walletAddress}</p>
+                    {walletAddress ? (
+                      <p className="text-sm font-mono">{walletAddress}</p>
+                    ) : (
+                      <p className="text-sm text-amber-800">
+                        No receiving address is configured. Connect a wallet service before receiving funds.
+                      </p>
+                    )}
                   </div>
 
                   <div className="pt-4">
-                    <Button 
+                    <Button
                       onClick={copyToClipboard}
+                      disabled={!walletAddress}
                       className="w-full bg-green-500 hover:bg-green-600 mb-2"
                     >
                       <Copy className="w-4 h-4 mr-2" />
                       Copy Address
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       className="w-full"
-                      onClick={() => navigate('/user/send-receive')}
+                      onClick={() => navigate("/user/send-receive")}
                     >
                       Back
                     </Button>
