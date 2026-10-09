@@ -27,7 +27,7 @@ export function DashboardSidebar() {
     { title: "Send/Receive", icon: ArrowLeftRight, url: "/user/send-receive" },
     { title: "History", icon: History, url: "/user/history" },
     { title: "Settings", icon: Settings, url: "/user/settings" },
-    { title: "Help", icon: HelpCircle, url: "#" },
+    { title: "Help", icon: HelpCircle, url: "/help" },
   ];
 
   const handleLogout = async () => {
