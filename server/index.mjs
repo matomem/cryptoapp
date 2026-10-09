@@ -60,8 +60,14 @@ async function main() {
   await loadLocalEnv();
   allowedAssets = new Set((process.env.LUNO_ALLOWED_ASSETS || "XBT").split(",").map((v) => v.trim().toUpperCase()).filter(Boolean));
   if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required. Copy .env.example to .env and configure Neon.");
-  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) throw new Error("SESSION_SECRET must be set to a random value of at least 32 characters.");
+  if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32 || process.env.SESSION_SECRET.startsWith("replace-with-")) throw new Error("SESSION_SECRET must be replaced with a random value of at least 32 characters.");
   const sql = neon(process.env.DATABASE_URL);
+  try {
+    const tables = await sql`SELECT to_regclass('public.app_users') AS users_table, to_regclass('public.app_sessions') AS sessions_table`;
+    if (!tables[0]?.users_table || !tables[0]?.sessions_table) throw new Error("Database schema is missing. Run server/schema.sql against your Neon database.");
+  } catch (error) {
+    throw new Error(`Cannot connect to Neon or verify the schema: ${error.message}`);
+  }
   const secureCookies = process.env.NODE_ENV === "production";
   const lunoKey = process.env.LUNO_API_KEY_ID;
   const lunoSecret = process.env.LUNO_API_KEY_SECRET;
