@@ -1,8 +1,8 @@
 # MyCrypto
 
-MyCrypto is a React, TypeScript, and Vite cryptocurrency wallet interface.
+MyCrypto is a React, TypeScript, and Vite cryptocurrency wallet interface backed by a Node.js API server, Neon PostgreSQL, and the Luno API. It does not fall back to fake balances or pretend transactions when services are unavailable.
 
-## Development
+## Quick start from a clone
 
 Requirements: Node.js 20+ and npm.
 
@@ -10,48 +10,33 @@ Requirements: Node.js 20+ and npm.
 git clone https://github.com/matomem/cryptoapp.git
 cd cryptoapp
 npm install
-npm run dev
+cp .env.example .env
 ```
 
-Run static checks before deploying:
+Configure `.env` with your Neon PostgreSQL connection string, a random session secret of at least 32 characters, and your Luno API credentials. Then run the SQL in `server/schema.sql` once against the same Neon database.
+
+```sh
+npm run build
+npm start
+```
+
+Open http://localhost:3000. See [DEPLOYMENT.md](DEPLOYMENT.md) for complete instructions and troubleshooting.
+
+## Real services
+
+- Registration, login, logout, sessions, profile, password changes and preferences are handled by the Node API and stored in Neon.
+- Balances, receiving addresses, transaction history and crypto send requests are fetched from Luno using server-side API credentials.
+- If required credentials, tables, or provider permissions are missing, the app returns an error rather than creating sample data.
+- Sending cryptocurrency can move real funds. Configure `LUNO_ALLOWED_ASSETS` conservatively and only enable Luno write permissions when you intend to send funds.
+
+## Security
+
+Keep `.env` private. Never expose Neon or Luno secrets through `VITE_*` variables or browser code. Deploy the frontend and backend together on a Node-capable host over HTTPS. A static-only deployment without the API server cannot provide live account functionality.
+
+## Development checks
 
 ```sh
 npm run lint
 npm run build
+node --check server/index.mjs
 ```
-
-## Deployment and live services
-
-The frontend now sends authentication, wallet, transaction, transfer, and account-settings requests to same-origin `/api/*` endpoints. These requests must be implemented by a trusted serverless/backend service before those features will work in production. A frontend-only deployment is not sufficient for authentication or cryptocurrency transfers.
-
-Required backend routes used by the frontend:
-
-- `POST /api/auth/register`
-- `POST /api/auth/login`
-- `GET /api/wallet/summary`
-- `GET /api/wallet/address` (receive address)
-- `GET /api/transactions`
-- `POST /api/transfers`
-- `GET /api/settings`
-- `PUT /api/settings/profile`
-- `POST /api/settings/password`
-- `PUT /api/settings/preferences`
-
-## Required production configuration
-
-Configure secrets in the backend hosting provider's environment-variable settings, never in frontend code or committed files.
-
-- `DATABASE_URL`: Neon PostgreSQL connection string.
-- `SESSION_SECRET`: long, random server-side session signing secret.
-- `LUNO_API_KEY_ID` and `LUNO_API_KEY_SECRET`: Luno API credentials with only the permissions actually required.
-- `LUNO_API_BASE_URL`: official Luno API base URL appropriate to the intended environment.
-
-Do not add these secrets to `VITE_*` variables: Vite exposes those values to every browser user. Do not commit a real `.env` file.
-
-## Financial safety
-
-The UI does not generate balances, addresses, or transaction history locally. It must receive them from the authenticated backend/provider. A transfer must be validated server-side, require an authenticated session and an explicit user confirmation, and be reported as complete only after the provider confirms it. Never use a user's exchange API credentials in browser code.
-
-## Project status
-
-The interface is being migrated away from mock behavior. Production operation is not complete until the backend routes above are deployed, Neon is configured, the Luno integration is authorized and tested, and the production build and end-to-end checks pass.
