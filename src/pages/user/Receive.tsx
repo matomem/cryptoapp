@@ -17,7 +17,7 @@ const Receive = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    apiRequest<{ address: string; currency?: string }>("/api/wallet/address?currency=BTC")
+    apiRequest<{ address: string; currency?: string }>("/api/wallet/address?currency=XBT")
       .then((data) => {
         setWalletAddress(data.address || "");
         setCurrency(data.currency || "BTC");
