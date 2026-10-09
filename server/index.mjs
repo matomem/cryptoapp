@@ -1,7 +1,7 @@
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { resolve, extname, sep } from "node:path";
-import { randomBytes, scrypt as scryptCallback, timingSafeEqual, createHash } from "node:crypto";
+import { randomBytes, scrypt as scryptCallback, timingSafeEqual, createHash, createHmac } from "node:crypto";
 import { promisify } from "node:util";
 import { neon } from "@neondatabase/serverless";
 
@@ -44,7 +44,7 @@ function getCookie(req, name) {
   const entry = header.split(";").map((part) => part.trim()).find((part) => part.startsWith(name + "="));
   return entry ? decodeURIComponent(entry.slice(name.length + 1)) : "";
 }
-function hashToken(token) { return createHash("sha256").update(token).digest("hex"); }
+function hashToken(token) { return createHmac("sha256", process.env.SESSION_SECRET || "").update(token).digest("hex"); }
 async function readBody(req) {
   let body = "";
   for await (const chunk of req) {
